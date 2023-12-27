@@ -75,7 +75,7 @@ input {
 .content {
   width: 26rem;
   margin-top: 2rem;
-  border: 2px dashed #8865c7;
+  border: 2px ridge  #8865c7;
   padding: 1rem 1rem;
   border-radius: 0.5rem;
 }
