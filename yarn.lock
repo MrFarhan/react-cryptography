@@ -6188,6 +6188,11 @@ jsdom@^16.6.0:
     ws "^7.4.6"
     xml-name-validator "^3.0.0"
 
+jsencrypt@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/jsencrypt/-/jsencrypt-3.3.2.tgz#b0f1a2278810c7ba1cb8957af11195354622df7c"
+  integrity sha512-arQR1R1ESGdAxY7ZheWr12wCaF2yF47v5qpB76TtV64H1pyGudk9Hvw8Y9tb/FiTIaaTRUyaSnm5T/Y53Ghm/A==
+
 jsesc@^2.5.1:
   version "2.5.2"
   resolved "https://registry.npmjs.org/jsesc/-/jsesc-2.5.2.tgz"
@@ -6680,7 +6685,7 @@ node-releases@^2.0.13:
 
 node-rsa@^1.1.1:
   version "1.1.1"
-  resolved "https://registry.npmjs.org/node-rsa/-/node-rsa-1.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/node-rsa/-/node-rsa-1.1.1.tgz#efd9ad382097782f506153398496f79e4464434d"
   integrity sha512-Jd4cvbJMryN21r5HgxQOpMEqv+ooke/korixNNK3mGqfGJmy0M77WDDzo/05969+OkMy3XW1UuZsSmW9KQm7Fw==
   dependencies:
     asn1 "^0.2.4"

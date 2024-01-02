@@ -9,6 +9,7 @@
     "assert": "^2.1.0",
     "constants-browserify": "^1.0.0",
     "crypto-js": "^4.2.0",
+    "jsencrypt": "^3.3.2",
     "jsrsasign": "^10.9.0",
     "node-rsa": "^1.1.1",
     "react": "^18.2.0",
