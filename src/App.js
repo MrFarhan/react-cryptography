@@ -98,14 +98,17 @@ function App() {
   const [screen, setScreen] = useState("encrypt");
   const [algorithm, setAlgorithm] = useState("AES");
   const [result, setResult] = useState({ data: "", error: null });
-  const [plainText, setPlainText] = useState('');
-  const [encryptedText, setEncryptedText] = useState('');
-  const [decryptedText, setDecryptedText] = useState('');
+  const [randomKeys, setRandomKeys] = useState(true); // State to track randomization toggle
+
+  const toggleRandomKeys = () => {
+    setRandomKeys(!randomKeys);
+    setText("");
+  };
 
   const secretPass = "XkhZG4fW2t2W";
 
-  const privateKey = "-----BEGIN RSA PRIVATE KEY-----MIICXQIBAAKBgQDlOJu6TyygqxfWT7eLtGDwajtNFOb9I5XRb6khyfD1Yt3YiCgQWMNW649887VGJiGr/L5i2osbl8C9+WJTeucF+S76xFxdU6jE0NQ+Z+zEdhUTooNRaY5nZiu5PgDB0ED/ZKBUSLKL7eibMxZtMlUDHjm4gwQco1KRMDSmXSMkDwIDAQABAoGAfY9LpnuWK5Bs50UVep5c93SJdUi82u7yMx4iHFMc/Z2hfenfYEzu+57fI4fvxTQ//5DbzRR/XKb8ulNv6+CHyPF31xk7YOBfkGI8qjLoq06V+FyBfDSwL8KbLyeHm7KUZnLNQbk8yGLzB3iYKkRHlmUanQGaNMIJziWOkN+N9dECQQD0ONYRNZeuM8zd8XJTSdcIX4a3gy3GGCJxOzv16XHxD03GW6UNLmfPwenKu+cdrQeaqEixrCejXdAFz/7+BSMpAkEA8EaSOeP5Xr3ZrbiKzi6TGMwHMvC7HdJxaBJbVRfApFrE0/mPwmP5rN7QwjrMY+0+AbXcm8mRQyQ1+IGEembsdwJBAN6az8Rv7QnD/YBvi52POIlRSSIMV7SwWvSK4WSMnGb1ZBbhgdg57DXaspcwHsFV7hByQ5BvMtIduHcT14ECfcECQATeaTgjFnqE/lQ22Rk0eGaYO80cc643BXVGafNfd9fcvwBMnk0iGX0XRsOozVt5AzilpsLBYuApa66NcVHJpCECQQDTjI2AQhFc1yRnCU/YgDnSpJVm1nASoRUnU8Jfm3Ozuku7JUXcVpt08DFSceCEX9unCuMcT72rAQlLpdZir876-----END RSA PRIVATE KEY-----";
-  const publicKey = '-----BEGIN PUBLIC KEY-----MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDlOJu6TyygqxfWT7eLtGDwajtNFOb9I5XRb6khyfD1Yt3YiCgQWMNW649887VGJiGr/L5i2osbl8C9+WJTeucF+S76xFxdU6jE0NQ+Z+zEdhUTooNRaY5nZiu5PgDB0ED/ZKBUSLKL7eibMxZtMlUDHjm4gwQco1KRMDSmXSMkDwIDAQAB-----END PUBLIC KEY-----';
+  const privateKey = "-----BEGIN RSA PRIVATE KEY-----MIIBPAIBAAJBAONf07ppv9h2c5HhP7ZloMHCE86ctuxLipL7M9hPqnGGK6SR+zPQzfRL6KoH/uzcRC14KkixJYS/5kHSKflLmu8CAwEAAQJBAMn6cRGyKMp4Bpe6+SbkxlX4OjIagmALhtCkN1za//SQ5017aeJlgwKO0KVM++g+mZMCTXhPolq8B8qzNXhidbECIQD5LOMV1fKKjn/eDitjHfpE7Q1eWMjm8L/kbZrnCtujyQIhAOmaFJd21sb3PWdsSd5SQWpwQ+MInqtrY45lQxyNnfT3AiEAu/o6AoIZ7J9eJYYpAyhdYtw2xqNSRK8BBPIO9xgA5MkCIBYsnxnFmRun6nc/yz9EVZtR7s/FSLKC7h9dM2Kper3/AiEA7Nkx0HbJwng9+/2CRNShNRqc3ASWiMnvR4UdpGQrpJI=-----END RSA PRIVATE KEY-----";
+  const publicKey = "-----BEGIN PUBLIC KEY-----MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAONf07ppv9h2c5HhP7ZloMHCE86ctuxLipL7M9hPqnGGK6SR+zPQzfRL6KoH/uzcRC14KkixJYS/5kHSKflLmu8CAwEAAQ==-----END PUBLIC KEY-----";
 
   const resetStates = () => {
     setText("");
@@ -117,8 +120,21 @@ function App() {
       let data;
       switch (algorithm) {
         case "AES":
-          data = CryptoJS.AES.encrypt(JSON.stringify(text), secretPass).toString();
+          if (!randomKeys) {
+            data = CryptoJS.AES.encrypt(
+              JSON.stringify(text),
+              secretPass
+            ).toString();
+          } else {
+            let key = CryptoJS.enc.Utf8.parse(secretPass.substr(0, 32));
+            let iv = CryptoJS.enc.Utf8.parse("123456");
+            data = CryptoJS.AES.encrypt(JSON.stringify(text), key, {
+              iv: iv,
+            }).toString();
+          }
           break;
+          // data = CryptoJS.AES.encrypt(JSON.stringify(text), secretPass).toString();
+          // break;
         case "TripleDES":
           data = CryptoJS.TripleDES.encrypt(JSON.stringify(text), secretPass).toString();
           break;
@@ -135,7 +151,6 @@ function App() {
         default:
           break;
       }
-      console.log(data, "new world")
       setResult({ data, error: null });
     } catch (e) {
       console.log("error is ", e);
@@ -148,30 +163,45 @@ function App() {
       let bytes, data;
       switch (algorithm) {
         case "AES":
-          bytes = CryptoJS.AES.decrypt(text, secretPass);
+          if (!randomKeys) {
+            console.log("hello world")
+          //   data = CryptoJS.AES.decrypt(text, secretPass);
+          } else {
+            console.log("new world")
+            let key = CryptoJS.enc.Utf8.parse(secretPass.substr(0, 32));
+            console.log(key, "key")
+            // let decrypted = CryptoJS.AES.decrypt(text, key, {
+            //   iv: CryptoJS.enc.Utf8.parse("123456"),
+            // });
+            // console.log(decrypted, "decrypted")
+            data = "a"
+            // data = decrypted.toString(CryptoJS.enc.Utf8);
+          }
           break;
+          // bytes = CryptoJS.AES.decrypt(text, secretPass);
+          // data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+          // break;
         case "TripleDES":
           bytes = CryptoJS.TripleDES.decrypt(text, secretPass);
+          data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
           break;
         case "DES":
           bytes = CryptoJS.DES.decrypt(text, secretPass);
+          data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
           break;
         case "SDES":
           data = sdesDecrypt(text, secretPass); // Using SDES decryption
-          setResult({ data, error: null });
-          return;
+          break;
         case "RSA":
-          const decrypt = new JSEncrypt();
-          console.log(text, "text")
-          console.log(decrypt, "decrypt")
-          decrypt.setPrivateKey(privateKey);
-          console.log(decrypt, "decrypt")
-          data = decrypt.decrypt(text);
+          const encrypt = new JSEncrypt();
+          encrypt.setPrivateKey(privateKey);
+          data = encrypt.decrypt(text);
+          break;
         default:
           break;
       }
 
-      data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      // data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
       setResult({ data, error: null });
     } catch (e) {
       setResult({ data: "", error: "Decryption failed. Please check your decryption key." });
@@ -193,6 +223,16 @@ function App() {
   return (
     <div className="container">
       <h1>Cryptography Tool</h1>
+
+      <div className="button-container">
+        <button
+          onClick={toggleRandomKeys}
+          className={randomKeys ? "active" : ""}
+        >
+          {!randomKeys ? "Remove Extra Security" : "Add Extra Security"}
+        </button>{" "}
+      </div>
+
       <div className="button-container">
         <button
           className={screen === "encrypt" ? "active" : ""}
